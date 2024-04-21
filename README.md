@@ -53,7 +53,7 @@ This guide will help you set up and run your Python web application.
 
     ```bash
     git clone git@github.com:Gupta-Nikhil85/FastAPI-broilerplate.git
-    cd FastAPI-broilerplate
+    cd FastAPI-boilerplate
     ```
 
 2. **Create a Virtual Environment** (optional but recommended)
