@@ -6,7 +6,6 @@ from app.schemas.base_schemas import (
     APIBasePaginatedResponse,
 )
 
-
 class ExampleBase(BaseModel):
     name: str
     value: int

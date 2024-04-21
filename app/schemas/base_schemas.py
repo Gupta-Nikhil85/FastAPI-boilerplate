@@ -6,9 +6,8 @@ from pydantic import BaseModel
 class ErrorResponse(BaseModel):
     message: str
 
-
-class NotFoundErrorResponse(BaseModel):
-    message: str = "Resource not found"
+class NotFoundErrorResponse(Exception):
+    pass
 
 
 class APIBaseResponse(BaseModel):

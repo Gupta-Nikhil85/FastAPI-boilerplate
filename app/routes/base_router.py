@@ -1,13 +1,8 @@
-from fastapi import APIRouter, Depends, status, Body, Query
+from fastapi import APIRouter, Depends, status, Body, Query, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.base_schemas import (
-    APIBaseListResponse,
-    APIBasePaginatedResponse,
-    APIBaseResponse,
-    ErrorResponse,
-    NotFoundErrorResponse,
-)
+from app.schemas.base_schemas import (APIBaseListResponse, APIBasePaginatedResponse,
+    APIBaseResponse, ErrorResponse, NotFoundErrorResponse)
 from app.utils.helper_functions import handle_exceptions
 from app.utils.constants import PAGE_SIZE
 
@@ -401,9 +396,7 @@ class BaseRouter:
         record = self.model.get_by_id(record_id, db)
 
         if record is None:
-            raise NotFoundErrorResponse(
-                message=f"No {self.model.__name__} Found With Given Id"
-            )
+            raise NotFoundErrorResponse(f"No {self.model.__name__} Found With Given Id")
 
         return APIBaseResponse(message=f"{self.model.__name__} Found", data=record)
 
@@ -412,9 +405,7 @@ class BaseRouter:
         record = self.model.create(db, **new_record_data)
 
         if not record:
-            raise ErrorResponse(
-                message=f"Error Occurred While Creating {self.model.__name__}"
-            )
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error Occurred While Creating {self.model.__name__}")
 
         return APIBaseResponse(
             message=f"{self.model.__name__} Created Successfully", data=record
@@ -424,16 +415,15 @@ class BaseRouter:
 
         existing_record = self.model.get_by_id(record_id, db)
         if existing_record is None:
-            raise NotFoundErrorResponse(
-                message=f"No {self.model.__name__} Found With Given Id"
-            )
+            raise NotFoundErrorResponse(f"No {self.model.__name__} Found With Given Id")
 
         new_record_data = {**request.model_dump()}
         record = self.model.update(record_id, db, **new_record_data)
 
         if not record:
-            raise ErrorResponse(
-                message=f"Error Occurred While Updating {self.model.__name__}"
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error Occurred While Updating {self.model.__name__}",
             )
 
         return APIBaseResponse(
@@ -443,9 +433,7 @@ class BaseRouter:
     def delete_existing_record(self, record_id, db):
         existing_record = self.model.get_by_id(record_id, db)
         if existing_record is None:
-            raise NotFoundErrorResponse(
-                message=f"No {self.model.__name__} Found With Given Id"
-            )
+            raise NotFoundErrorResponse(f"No {self.model.__name__} Found With Given Id")
 
         self.model.delete(record_id, db)
         return APIBaseResponse(message=f"{self.model.__name__} Deleted Successfully")

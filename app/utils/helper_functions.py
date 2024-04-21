@@ -25,15 +25,8 @@ def handle_exceptions(func):
             # Handle 404 errors
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Resource not found: {e.message}",
+                detail=f"Resource not found: {e}",
                 headers={"X-Error": "Resource Not Found"},
-            )
-        except ErrorResponse as e:
-            # Handle generic errors
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Internal server error occurred: {e.message}",
-                headers={"X-Error": "Bad Request"},
             )
         except ValueError as e:
             # Handle value errors
